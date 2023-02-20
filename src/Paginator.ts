@@ -33,7 +33,7 @@ export class Paginator {
         const showPrev = this.hasPrev === YesNoDepends.Yes || (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1 && this.totalPages > 2);
         
         // eslint-disable-next-line no-extra-parens
-        const showNext = this.hasPrev === YesNoDepends.Yes || (this.hasPrev === YesNoDepends.Depends && this.currentPage < this.totalPages && this.totalPages > 2);
+        const showNext = this.hasNext === YesNoDepends.Yes || (this.hasNext === YesNoDepends.Depends && this.currentPage < this.totalPages && this.totalPages > 2);
         
         if (showPrev) {
             const page = this.currentPage - 1;
