@@ -58,8 +58,8 @@ export class Paginator {
         let ignoreEnd = false;
 
         if (this.totalPages > itemsCounter) {
-            ignoreStart = this.currentPage >= 4 + startSize;
-            ignoreEnd = this.totalPages - this.currentPage + 1 >= 4 + endSize;
+            ignoreStart = this.currentPage > 2 + startSize;
+            ignoreEnd = this.totalPages - this.currentPage > endSize;
         }
 
         if (ignoreStart) {

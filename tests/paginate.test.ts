@@ -171,6 +171,29 @@ it("nine pages", () => {
     iterCheck(p, expects);
 });
 
+it("ten pages", () => {
+    const p = Paginator.builder(10)
+        .maxItemCount(9)
+        .startSize(2)
+        .endSize(2)
+        .buildPaginatorIter();
+
+    const expects = [
+        "1* 2 3 4 5 ... 9 10 >",
+        "< 1 2* 3 4 ... 9 10 >",
+        "< 1 2 3* 4 ... 9 10 >",
+        "< 1 2 3 4* ... 9 10 >",
+        "< 1 2 ... 5* ... 9 10 >",
+        "< 1 2 ... 6* ... 9 10 >",
+        "< 1 2 ... 7* 8 9 10 >",
+        "< 1 2 ... 7 8* 9 10 >",
+        "< 1 2 ... 7 8 9* 10 >",
+        "< 1 2 ... 6 7 8 9 10*",
+    ];
+
+    iterCheck(p, expects);
+});
+
 it("twenty pages, maxItemCount = 17", () => {
     const p = Paginator.builder(20)
         .maxItemCount(17)
