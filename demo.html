@@ -140,7 +140,7 @@
                     } else if (pageItem instanceof PaginationBarGenerator.PageItems.Page) {
                         html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">${pageItem.pageNumber}</a></li>`;
                     } else if (pageItem instanceof PaginationBarGenerator.PageItems.CurrentPage) {
-                        html += `<li class="page-item"><span class="page-link active">${pageItem.pageNumber}</span></li>`;
+                        html += `<li class="page-item active"><span class="page-link">${pageItem.pageNumber}</span></li>`;
                     } else if (pageItem instanceof PaginationBarGenerator.PageItems.Ignore) {
                         html += `<li class="page-item"><span class="page-link">...</span></li>`;
                     } else if (pageItem instanceof PaginationBarGenerator.PageItems.Next) {
