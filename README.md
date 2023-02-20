@@ -35,7 +35,7 @@ for (const pageItem of paginator.paginate()) {
 
 [Source](demo.html)
 
-[Demo Page](https://htmlpreview.github.io/?https://github.com/magiclen/ts-paginator/blob/master/demo.html)
+[Demo Page](https://rawcdn.githack.com/magiclen/ts-paginator/master/demo.html)
 
 ## License
 
