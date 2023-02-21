@@ -1,5 +1,33 @@
 export abstract class PageItem {
     abstract toString(): string;
+
+    isPage(): this is Page {
+        return this instanceof Page;
+    }
+
+    isCurrentPage(): this is CurrentPage {
+        return this instanceof CurrentPage;
+    }
+
+    isIgnore(): this is Ignore {
+        return this instanceof Ignore;
+    }
+
+    isPrev(): this is Prev {
+        return this instanceof Prev;
+    }
+
+    isNext(): this is Next {
+        return this instanceof Next;
+    }
+
+    isReservedPrev(): this is ReservedPrev {
+        return this instanceof ReservedPrev;
+    }
+
+    isReservedNext(): this is ReservedNext {
+        return this instanceof ReservedNext;
+    }
 }
 
 export abstract class PageItemWithNumber extends PageItem {
