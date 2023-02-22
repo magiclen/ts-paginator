@@ -1,33 +1,5 @@
 export abstract class PageItem {
     abstract toString(): string;
-
-    isPage(): this is Page {
-        return this instanceof Page;
-    }
-
-    isCurrentPage(): this is CurrentPage {
-        return this instanceof CurrentPage;
-    }
-
-    isIgnore(): this is Ignore {
-        return this instanceof Ignore;
-    }
-
-    isPrev(): this is Prev {
-        return this instanceof Prev;
-    }
-
-    isNext(): this is Next {
-        return this instanceof Next;
-    }
-
-    isReservedPrev(): this is ReservedPrev {
-        return this instanceof ReservedPrev;
-    }
-
-    isReservedNext(): this is ReservedNext {
-        return this instanceof ReservedNext;
-    }
 }
 
 export abstract class PageItemWithNumber extends PageItem {
@@ -110,4 +82,32 @@ export const reservedPrev = (): ReservedPrev => {
 
 export const reservedNext = (): ReservedNext => {
     return _reservedNext;
+};
+
+export const isPage = (pageItem: PageItem): pageItem is Page => {
+    return pageItem instanceof Page;
+};
+
+export const isCurrentPage = (pageItem: PageItem): pageItem is CurrentPage => {
+    return pageItem instanceof CurrentPage;
+};
+
+export const isIgnore = (pageItem: PageItem): pageItem is Ignore => {
+    return pageItem instanceof Ignore;
+};
+
+export const isPrev = (pageItem: PageItem): pageItem is Prev => {
+    return pageItem instanceof Prev;
+};
+
+export const isNext = (pageItem: PageItem): pageItem is Next => {
+    return pageItem instanceof Next;
+};
+
+export const isReservedPrev = (pageItem: PageItem): pageItem is ReservedPrev => {
+    return pageItem instanceof ReservedPrev;
+};
+
+export const isReservedNext = (pageItem: PageItem): pageItem is ReservedNext => {
+    return pageItem instanceof ReservedNext;
 };
