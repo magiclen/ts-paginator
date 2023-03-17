@@ -1,9 +1,10 @@
 {
   "name": "pagination-bar-generator",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "This library is used for generating pagination bar.",
-  "main": "lib/lib.js",
-  "types": "lib/lib.d.ts",
+  "type": "module",
+  "exports": "./lib/lib.js",
+  "types": "./lib/lib.d.ts",
   "engines": {
     "node": ">=16"
   },
