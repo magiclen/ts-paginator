@@ -1,6 +1,6 @@
-import { YesNoDepends } from "./types";
-import * as PageItems from "./PageItem";
-import { PaginatorBuilder } from "./PaginatorBuilder";
+import { YesNoDepends } from "./types.js";
+import * as PageItems from "./PageItem.js";
+import { PaginatorBuilder } from "./PaginatorBuilder.js";
 
 export class Paginator {
     /**

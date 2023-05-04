@@ -1,4 +1,4 @@
-import { PaginatorBuilder } from "../src/lib";
+import { PaginatorBuilder } from "../src/lib.js";
 
 it("one page", () => {
     const iter = new PaginatorBuilder(1).buildPaginatorIter();

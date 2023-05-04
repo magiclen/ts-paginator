@@ -1,5 +1,5 @@
-import { YesNoDepends } from "./types";
-import { Paginator } from "./Paginator";
+import { YesNoDepends } from "./types.js";
+import { Paginator } from "./Paginator.js";
 
 export class PaginatorIter implements IterableIterator<Paginator> {
     /**

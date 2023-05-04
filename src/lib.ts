@@ -1,11 +1,11 @@
-import { PageItem } from "./PageItem";
+import { PageItem } from "./PageItem.js";
 
-export * as PageItems from "./PageItem";
-export * from "./Paginator";
-export * from "./PaginatorBuilder";
-export * as PaginatorBuildErrors from "./PaginatorBuildError";
-export * from "./PaginatorIter";
-export * from "./types";
+export * as PageItems from "./PageItem.js";
+export * from "./Paginator.js";
+export * from "./PaginatorBuilder.js";
+export * as PaginatorBuildErrors from "./PaginatorBuildError.js";
+export * from "./PaginatorIter.js";
+export * from "./types.js";
 
 export const pageItemsToString = (pageItems: PageItem[]): string => {
     const s = [];

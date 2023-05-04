@@ -1,7 +1,7 @@
-import { YesNoDepends } from "./types";
-import * as PaginatorBuildErrors from "./PaginatorBuildError";
-import { Paginator } from "./Paginator";
-import { PaginatorIter } from "./PaginatorIter";
+import { YesNoDepends } from "./types.js";
+import * as PaginatorBuildErrors from "./PaginatorBuildError.js";
+import { Paginator } from "./Paginator.js";
+import { PaginatorIter } from "./PaginatorIter.js";
 
 export class PaginatorBuilder {
     private _totalPages: number;
