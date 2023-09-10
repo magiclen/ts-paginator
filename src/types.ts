@@ -4,7 +4,7 @@ export enum YesNoDepends {
     Depends
 }
 
-export const stringToYesNoDepends = (s: "yes" | "no" | "depends" | string): YesNoDepends => {
+export const stringToYesNoDepends = (s: string): YesNoDepends => {
     switch (s.toLowerCase()) {
         case "yes":
             return YesNoDepends.Yes;
