@@ -29,10 +29,8 @@ export class Paginator {
         const v: PageItems.PageItem[] = [];
         let itemsCounter = this.maxItemCount;
 
-        // eslint-disable-next-line no-extra-parens
         const showPrev = this.hasPrev === YesNoDepends.Yes || (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1 && this.totalPages > 2);
         
-        // eslint-disable-next-line no-extra-parens
         const showNext = this.hasNext === YesNoDepends.Yes || (this.hasNext === YesNoDepends.Depends && this.currentPage < this.totalPages && this.totalPages > 2);
         
         if (showPrev) {

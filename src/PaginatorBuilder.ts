@@ -42,7 +42,7 @@ export class PaginatorBuilder {
     /**
      * Set the number of pages.
      */
-    totalPages(n: number): PaginatorBuilder {
+    totalPages(n: number): this {
         this._totalPages = n;
 
         return this;
@@ -55,7 +55,7 @@ export class PaginatorBuilder {
     /**
      * Set the number of the current page.
      */
-    currentPage(n: number): PaginatorBuilder {
+    currentPage(n: number): this {
         this._currentPage = n;
 
         return this;
@@ -68,7 +68,7 @@ export class PaginatorBuilder {
     /**
      * Set the max number of `PageItem`s after generated.
      */
-    maxItemCount(n: number): PaginatorBuilder {
+    maxItemCount(n: number): this {
         this._maxItemCount = n;
 
         return this;
@@ -81,7 +81,7 @@ export class PaginatorBuilder {
     /**
      * Set the number of `PageItem`s (the `PageItem::Prev` item is excluded) on the start edge (before the first `PageItem::Ignore` item).
      */
-    startSize(n: number): PaginatorBuilder {
+    startSize(n: number): this {
         this._startSize = n;
 
         return this;
@@ -94,7 +94,7 @@ export class PaginatorBuilder {
     /**
      * Set the number of `PageItem`s (the `PageItem::Next` item is excluded) on the end edge (after the last `PageItem::Ignore` item).
      */
-    endSize(n: number): PaginatorBuilder {
+    endSize(n: number): this {
         this._endSize = n;
 
         return this;
@@ -107,7 +107,7 @@ export class PaginatorBuilder {
     /**
      * Set whether to add the `PageItem::Prev` item.
      */
-    hasPrev(opt: YesNoDepends): PaginatorBuilder {
+    hasPrev(opt: YesNoDepends): this {
         this._hasPrev = opt;
 
         return this;
@@ -120,7 +120,7 @@ export class PaginatorBuilder {
     /**
      * Set whether to add the `PageItem::Next` item.
      */
-    hasNext(opt: YesNoDepends): PaginatorBuilder {
+    hasNext(opt: YesNoDepends): this {
         this._hasNext = opt;
 
         return this;
