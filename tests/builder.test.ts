@@ -1,5 +1,4 @@
-import { PaginatorBuilder, YesNoDepends } from "../src/lib.js";
-import { PaginatorBuildErrors } from "../src/lib.js";
+import { PaginatorBuildErrors, PaginatorBuilder, YesNoDepends } from "../src/lib.js";
 
 it("basic", () => {
     expect(() => PaginatorBuilder.builder(1).buildPaginator()).toBeDefined();

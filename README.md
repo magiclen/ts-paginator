@@ -8,22 +8,22 @@ This library is used for generating pagination bar.
 ## Usage
 
 ```typescript
-import { Paginator, PageItems } from "pagination-bar-generator";
+import { Paginator } from "pagination-bar-generator";
 
 const paginator = Paginator.builder(5).currentPage(1).buildPaginator();
 
 let html = "";
 
 for (const pageItem of paginator.paginate()) {
-    if (pageItem instanceof PageItems.Prev) {
+    if (pageItem.isPrev()) {
         html += `<li><a href="/page/${pageItem.pageNumber}">&laquo;</a></li>`;
-    } else if (pageItem instanceof PageItems.Page) {
+    } else if (pageItem.isPage()) {
         html += `<li><a href="/page/${pageItem.pageNumber}">${pageItem.pageNumber}</a></li>`;
-    } else if (pageItem instanceof PageItems.CurrentPage) {
+    } else if (pageItem.isCurrentPage()) {
         html += `<li>${pageItem.pageNumber}</li>`;
-    } else if (pageItem instanceof PageItems.Ignore) {
+    } else if (pageItem.isIgnore()) {
         html += `<li>...</li>`;
-    } else if (pageItem instanceof PageItems.Next) {
+    } else if (pageItem.isNext()) {
         html += `<li><a href="/page/${pageItem.pageNumber}">&raquo;</a></li>`;
     } else {
         // `PageItem.ReservedPrev` or `PageItem.ReservedNext` variant is used only when the `hasPrev` option or the `hasNext` option is set to `YesNoDepends.Yes`.

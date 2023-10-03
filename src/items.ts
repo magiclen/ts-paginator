@@ -1,5 +1,33 @@
 export abstract class PageItem {
     abstract toString(): string;
+
+    public isPage(): this is Page {
+        return false;
+    }
+
+    public isCurrentPage(): this is CurrentPage {
+        return false;
+    }
+
+    public isIgnore(): this is Ignore {
+        return false;
+    }
+
+    public isPrev(): this is Prev {
+        return false;
+    }
+
+    public isNext(): this is Next {
+        return false;
+    }
+
+    public isReservedPrev(): this is ReservedPrev {
+        return false;
+    }
+
+    public isReservedNext(): this is ReservedNext {
+        return false;
+    }
 }
 
 export abstract class PageItemWithNumber extends PageItem {
@@ -12,11 +40,19 @@ export class Page extends PageItemWithNumber {
     toString(): string {
         return this.pageNumber.toString();
     }
+
+    public isPage(): this is Page {
+        return true;
+    }
 }
 
 export class CurrentPage extends PageItemWithNumber {
     toString(): string {
         return `${this.pageNumber}*`;
+    }
+    
+    public isCurrentPage(): this is CurrentPage {
+        return true;
     }
 }
 
@@ -24,11 +60,19 @@ export class Ignore extends PageItem {
     toString(): string {
         return "...";
     }
+
+    public isIgnore(): this is Ignore {
+        return true;
+    }
 }
 
 export class Prev extends PageItemWithNumber {
     toString(): string {
         return "<";
+    }
+
+    public isPrev(): this is Prev {
+        return true;
     }
 }
 
@@ -36,17 +80,29 @@ export class Next extends PageItemWithNumber {
     toString(): string {
         return ">";
     }
+
+    public isNext(): this is Next {
+        return true;
+    }
 }
 
 export class ReservedPrev extends PageItem {
     toString(): string {
         return ")";
     }
+
+    public isReservedPrev(): this is ReservedPrev {
+        return true;
+    }
 }
 
 export class ReservedNext extends PageItem {
     toString(): string {
         return "(";
+    }
+
+    public isReservedNext(): this is ReservedNext {
+        return true;
     }
 }
 
@@ -82,32 +138,4 @@ export const reservedPrev = (): ReservedPrev => {
 
 export const reservedNext = (): ReservedNext => {
     return _reservedNext;
-};
-
-export const isPage = (pageItem: PageItem): pageItem is Page => {
-    return pageItem instanceof Page;
-};
-
-export const isCurrentPage = (pageItem: PageItem): pageItem is CurrentPage => {
-    return pageItem instanceof CurrentPage;
-};
-
-export const isIgnore = (pageItem: PageItem): pageItem is Ignore => {
-    return pageItem instanceof Ignore;
-};
-
-export const isPrev = (pageItem: PageItem): pageItem is Prev => {
-    return pageItem instanceof Prev;
-};
-
-export const isNext = (pageItem: PageItem): pageItem is Next => {
-    return pageItem instanceof Next;
-};
-
-export const isReservedPrev = (pageItem: PageItem): pageItem is ReservedPrev => {
-    return pageItem instanceof ReservedPrev;
-};
-
-export const isReservedNext = (pageItem: PageItem): pageItem is ReservedNext => {
-    return pageItem instanceof ReservedNext;
 };

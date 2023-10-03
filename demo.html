@@ -133,19 +133,19 @@
                 let html = '';
 
                 for (const pageItem of paginator.paginate()) {
-                    if (pageItem instanceof PaginationBarGenerator.PageItems.Prev) {
+                    if (pageItem.isPrev()) {
                         html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">&laquo;</a></li>`;
-                    } else if (pageItem instanceof PaginationBarGenerator.PageItems.ReservedPrev) {
+                    } else if (pageItem.isReservedPrev()) {
                         html += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
-                    } else if (pageItem instanceof PaginationBarGenerator.PageItems.Page) {
+                    } else if (pageItem.isPage()) {
                         html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">${pageItem.pageNumber}</a></li>`;
-                    } else if (pageItem instanceof PaginationBarGenerator.PageItems.CurrentPage) {
+                    } else if (pageItem.isCurrentPage()) {
                         html += `<li class="page-item active"><span class="page-link">${pageItem.pageNumber}</span></li>`;
-                    } else if (pageItem instanceof PaginationBarGenerator.PageItems.Ignore) {
+                    } else if (pageItem.isIgnore()) {
                         html += `<li class="page-item"><span class="page-link">...</span></li>`;
-                    } else if (pageItem instanceof PaginationBarGenerator.PageItems.Next) {
+                    } else if (pageItem.isNext()) {
                         html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">&raquo;</a></li>`;
-                    } else if (pageItem instanceof PaginationBarGenerator.PageItems.ReservedNext) {
+                    } else if (pageItem.isReservedNext()) {
                         html += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
                     }
                 }
