@@ -32,13 +32,15 @@ export class EndSizeIncorrect extends PaginatorBuildError {
 }
 
 export class CurrentPageTooLarge extends PaginatorBuildError {
-    constructor(public readonly currentPage: number, public readonly totalPages: number) {
-        super(`CurrentPageTooLarge: currentPage = ${currentPage}, totalPages = ${totalPages}`);
+    constructor(readonly currentPage: number, readonly totalPages: number) {
+        super(
+            `CurrentPageTooLarge: currentPage = ${currentPage}, totalPages = ${totalPages}`,
+        );
     }
 }
 
 export class MaxItemCountTooSmall extends PaginatorBuildError {
-    constructor(public readonly minItemCount: number) {
+    constructor(readonly minItemCount: number) {
         super(`MaxItemCountTooSmall: minItemCount = ${minItemCount}`);
     }
 }

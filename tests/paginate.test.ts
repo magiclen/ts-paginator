@@ -1,6 +1,7 @@
-import { Paginator, PaginatorIter, pageItemsToString } from "../src/lib.js";
+import type { PaginatorIter } from "../src/lib.js";
+import { Paginator, pageItemsToString } from "../src/lib.js";
 
-const iterCheck = (p: PaginatorIter, expects: string[]) => {
+const iterCheck = (p: PaginatorIter, expects: string[]): void => {
     for (const e of expects) {
         const paginator = p.next().value;
 

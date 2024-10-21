@@ -1,7 +1,7 @@
 export enum YesNoDepends {
     Yes,
     No,
-    Depends
+    Depends,
 }
 
 export const stringToYesNoDepends = (s: string): YesNoDepends => {

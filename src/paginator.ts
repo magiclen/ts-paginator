@@ -8,8 +8,8 @@ import {
     TotalPagesIncorrect,
 } from "./errors.js";
 
+import type { PageItem } from "./items.js";
 import {
-    PageItem,
     currentPage,
     ignore,
     next,
@@ -21,12 +21,12 @@ import {
 
 import { YesNoDepends } from "./types.js";
 
-
 export class Paginator {
     /**
      * An alias of `new PaginatorBuilder`.
      */
     static builder(totalPages: number): PaginatorBuilder {
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         return new PaginatorBuilder(totalPages);
     }
 
@@ -34,13 +34,13 @@ export class Paginator {
      * You should not new `Paginator` on your own.
      */
     constructor(
-        public readonly totalPages: number,
-        public readonly currentPage: number,
-        public readonly maxItemCount: number,
-        public readonly startSize: number,
-        public readonly endSize: number,
-        public readonly hasPrev: YesNoDepends,
-        public readonly hasNext: YesNoDepends,
+        readonly totalPages: number,
+        readonly currentPage: number,
+        readonly maxItemCount: number,
+        readonly startSize: number,
+        readonly endSize: number,
+        readonly hasPrev: YesNoDepends,
+        readonly hasNext: YesNoDepends,
     ) {
         // do nothing
     }
@@ -49,9 +49,13 @@ export class Paginator {
         const v: PageItem[] = [];
         let itemsCounter = this.maxItemCount;
 
-        const showPrev = this.hasPrev === YesNoDepends.Yes || (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1 && this.totalPages > 2);
+        const showPrev = this.hasPrev === YesNoDepends.Yes
+            || (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1
+                && this.totalPages > 2);
 
-        const showNext = this.hasNext === YesNoDepends.Yes || (this.hasNext === YesNoDepends.Depends && this.currentPage < this.totalPages && this.totalPages > 2);
+        const showNext = this.hasNext === YesNoDepends.Yes
+            || (this.hasNext === YesNoDepends.Depends
+                && this.currentPage < this.totalPages && this.totalPages > 2);
 
         if (showPrev) {
             const page = this.currentPage - 1;
@@ -90,6 +94,7 @@ export class Paginator {
                     v.push(page(i));
                 }
 
+                // eslint-disable-next-line no-bitwise
                 const windowSize = itemsCounter >> 1;
 
                 let hpS = this.currentPage - windowSize;
@@ -150,7 +155,11 @@ export class Paginator {
 
                 v.push(ignore());
 
-                for (let i = this.currentPage - itemsCounter;i < this.currentPage;i++) {
+                for (
+                    let i = this.currentPage - itemsCounter;
+                    i < this.currentPage;
+                    i++
+                ) {
                     v.push(page(i));
                 }
 
@@ -181,7 +190,11 @@ export class Paginator {
 
             v.push(ignore());
 
-            for (let i = this.totalPages - this.endSize + 1;i <= this.totalPages;i++) {
+            for (
+                let i = this.totalPages - this.endSize + 1;
+                i <= this.totalPages;
+                i++
+            ) {
                 v.push(page(i));
             }
         } else {
@@ -339,8 +352,7 @@ export class PaginatorBuilder {
             case 1:
             case 2:
                 return this._totalPages;
-            default:
-            {
+            default: {
                 const startSize = Math.min(this._startSize, this._totalPages);
                 const endSize = Math.min(this._endSize, this._totalPages);
                 const size = startSize + endSize;
@@ -369,8 +381,10 @@ export class PaginatorBuilder {
      * @throws {PaginatorBuildErrors.CurrentPageTooLarge}
      * @throws {PaginatorBuildErrors.MaxItemCountTooSmall}
      */
-    private buildCheckCommon() {
-        if (!Number.isSafeInteger(this._currentPage) || this._currentPage <= 0) {
+    private buildCheckCommon(): void {
+        if (
+            !Number.isSafeInteger(this._currentPage) || this._currentPage <= 0
+        ) {
             throw new CurrentPageIncorrect();
         }
 
@@ -434,6 +448,7 @@ export class PaginatorBuilder {
     buildPaginatorIter(): PaginatorIter {
         this.buildCheckCommon();
 
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         return new PaginatorIter(
             this._totalPages,
             this._currentPage,

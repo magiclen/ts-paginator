@@ -1,4 +1,4 @@
-import { PageItem } from "./items.js";
+import type { PageItem } from "./items.js";
 
 export * as PageItems from "./items.js";
 export * from "./paginator.js";
