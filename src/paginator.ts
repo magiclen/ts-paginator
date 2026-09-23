@@ -38,7 +38,6 @@ export class Paginator {
         const showPrev =
             this.hasPrev === YesNoDepends.Yes ||
             (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1 && this.totalPages > 2);
-
         const showNext =
             this.hasNext === YesNoDepends.Yes ||
             (this.hasNext === YesNoDepends.Depends &&
@@ -68,7 +67,7 @@ export class Paginator {
         let ignoreEnd = false;
 
         if (this.totalPages > itemsCounter) {
-            ignoreStart = this.currentPage > 2 + startSize;
+            ignoreStart = this.currentPage > startSize && this.currentPage - startSize > 2;
             ignoreEnd = this.totalPages - this.currentPage > endSize;
         }
 
@@ -82,33 +81,38 @@ export class Paginator {
                     v.push(PageItems.page(i));
                 }
 
-                const windowSize = itemsCounter >> 1;
+                const windowSize = Math.floor(itemsCounter / 2);
 
-                let hpS = this.currentPage - windowSize;
+                // Keep the missing left distance so the window can shift to the right by the same amount.
+                const hpSUnderflow = Math.max(windowSize - this.currentPage, 0);
+                let hpS = Math.max(this.currentPage - windowSize, 0);
                 const hpE = this.currentPage - 1;
                 const tpS = this.currentPage + 1;
-                let tpE = this.currentPage + (itemsCounter - windowSize);
+                const rightWindowSize = itemsCounter - windowSize;
+                // `Number.MAX_SAFE_INTEGER` plays the role of `usize::MAX` in the Rust version, so numbers beyond it are never computed.
+                const maxRightWindowSize = Number.MAX_SAFE_INTEGER - this.currentPage;
+                // Keep the overflow distance so the window can shift to the left by the same amount.
+                const tpEOverflow = Math.max(rightWindowSize - maxRightWindowSize, 0);
+                let tpE = this.currentPage + Math.min(rightWindowSize, maxRightWindowSize);
 
-                const endStart = this.totalPages - this.endSize + 1;
+                const endBoundary = this.totalPages - endSize;
 
-                if (startSize + 2 >= hpS) {
-                    // no ignore_start item
-
+                if (hpSUnderflow > 0 || startSize + 2 >= hpS) {
+                    // Reuse the ignore marker slot when the left gap is too small to hide.
                     const oldHpS = hpS;
 
                     hpS = startSize + 1;
 
-                    // plus one because ignore_start is not needed
-                    tpE += hpS + 1 - oldHpS;
+                    tpE += hpS + 1 - oldHpS + hpSUnderflow;
                 } else {
                     v.push(PageItems.ignore());
 
-                    if (tpE + 2 > endStart) {
-                        // tp_e is too high, shift the window left
+                    if (tpE >= endBoundary) {
+                        // Shift the visible window left when it reaches the reserved end section.
                         const oldTpE = tpE;
 
-                        tpE = endStart - 2;
-                        hpS -= oldTpE - tpE;
+                        tpE = endBoundary - 1;
+                        hpS -= oldTpE - tpE + tpEOverflow;
                     }
                 }
 
@@ -122,13 +126,13 @@ export class Paginator {
                     v.push(PageItems.page(i));
                 }
 
-                if (tpE + 2 === endStart) {
-                    v.push(PageItems.page(tpE + 1));
+                if (tpE === endBoundary - 1) {
+                    v.push(PageItems.page(endBoundary));
                 } else {
                     v.push(PageItems.ignore());
                 }
 
-                for (let i = endStart; i <= this.totalPages; i++) {
+                for (let i = endBoundary + 1; i <= this.totalPages; i++) {
                     v.push(PageItems.page(i));
                 }
             } else {
@@ -154,6 +158,7 @@ export class Paginator {
             }
         } else if (ignoreEnd) {
             itemsCounter -= endSize + 1;
+
             itemsCounter -= this.currentPage;
 
             for (let i = 1; i < this.currentPage; i++) {
@@ -162,18 +167,15 @@ export class Paginator {
 
             v.push(PageItems.currentPage(this.currentPage));
 
-            {
-                const s = this.currentPage + 1;
-                const e = this.currentPage + itemsCounter;
+            const windowEnd = this.currentPage + itemsCounter;
 
-                for (let i = s; i <= e; i++) {
-                    v.push(PageItems.page(i));
-                }
+            for (let i = this.currentPage + 1; i <= windowEnd; i++) {
+                v.push(PageItems.page(i));
             }
 
             v.push(PageItems.ignore());
 
-            for (let i = this.totalPages - this.endSize + 1; i <= this.totalPages; i++) {
+            for (let i = this.totalPages - endSize + 1; i <= this.totalPages; i++) {
                 v.push(PageItems.page(i));
             }
         } else {
@@ -189,12 +191,10 @@ export class Paginator {
         }
 
         if (showNext) {
-            const page = this.currentPage + 1;
-
-            if (page > this.totalPages) {
-                v.push(PageItems.reservedNext());
+            if (this.currentPage < this.totalPages) {
+                v.push(PageItems.next(this.currentPage + 1));
             } else {
-                v.push(PageItems.next(page));
+                v.push(PageItems.reservedNext());
             }
         }
 
@@ -315,18 +315,34 @@ export class PaginatorBuilder {
         return this;
     }
 
+    /**
+     * Compute the smallest valid `maxItemCount`, or `Number.MAX_SAFE_INTEGER` if no value is large
+     * enough.
+     */
     computeMinItemCount(): number {
+        return Math.min(this.#computeMinItemCount(), Number.MAX_SAFE_INTEGER);
+    }
+
+    /**
+     * The result can be larger than `Number.MAX_SAFE_INTEGER`, which means that no value is large
+     * enough.
+     */
+    #computeMinItemCount(): number {
         switch (this.#totalPages) {
             case 0:
+                return 0;
             case 1:
             case 2:
-                return this.#totalPages;
+                return (
+                    this.#totalPages +
+                    (this.#hasPrev === YesNoDepends.Yes ? 1 : 0) +
+                    (this.#hasNext === YesNoDepends.Yes ? 1 : 0)
+                );
             default: {
                 const startSize = Math.min(this.#startSize, this.#totalPages);
                 const endSize = Math.min(this.#endSize, this.#totalPages);
-                const size = startSize + endSize;
 
-                let minItemCount = Math.min(size + 3, this.#totalPages);
+                let minItemCount = Math.min(startSize + endSize + 3, this.#totalPages);
 
                 if (this.#hasPrev !== YesNoDepends.No) {
                     minItemCount += 1;
@@ -375,10 +391,10 @@ export class PaginatorBuilder {
             throw new CurrentPageTooLarge(this.#currentPage, this.#totalPages);
         }
 
-        const minItemCount = this.computeMinItemCount();
+        const minItemCount = this.#computeMinItemCount();
 
         if (this.#maxItemCount < minItemCount) {
-            throw new MaxItemCountTooSmall(minItemCount);
+            throw new MaxItemCountTooSmall(Math.min(minItemCount, Number.MAX_SAFE_INTEGER));
         }
     }
 

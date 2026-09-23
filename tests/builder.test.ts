@@ -20,6 +20,20 @@ it("basic", () => {
     );
 });
 
+it("forced controls on small page counts", () => {
+    const onePage = PaginatorBuilder.builder(1).hasPrev(YesNoDepends.Yes).hasNext(YesNoDepends.Yes);
+
+    assert.throws(() => onePage.maxItemCount(2).buildPaginator(), { minItemCount: 3 });
+    assert.doesNotThrow(() => onePage.maxItemCount(3).buildPaginator());
+
+    const twoPages = PaginatorBuilder.builder(2)
+        .hasPrev(YesNoDepends.Yes)
+        .hasNext(YesNoDepends.Yes);
+
+    assert.throws(() => twoPages.maxItemCount(3).buildPaginator(), { minItemCount: 4 });
+    assert.doesNotThrow(() => twoPages.maxItemCount(4).buildPaginatorIter());
+});
+
 it("maxItemCount 1", () => {
     const builder = new PaginatorBuilder(1)
         .startSize(1)
@@ -84,4 +98,15 @@ it("maxItemCount 3", () => {
     assert.doesNotThrow(() => builder.totalPages(7).maxItemCount(7).buildPaginator());
     assert.doesNotThrow(() => builder.totalPages(8).maxItemCount(7).buildPaginator());
     assert.throws(() => builder.totalPages(8).maxItemCount(6).buildPaginator(), Error);
+});
+
+it("oversized layout settings do not overflow", () => {
+    assert.throws(
+        () =>
+            PaginatorBuilder.builder(Number.MAX_SAFE_INTEGER)
+                .startSize(Number.MAX_SAFE_INTEGER)
+                .endSize(Number.MAX_SAFE_INTEGER)
+                .buildPaginator(),
+        { minItemCount: Number.MAX_SAFE_INTEGER },
+    );
 });

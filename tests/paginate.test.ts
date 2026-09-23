@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { it } from "node:test";
 
 import type { PaginatorIter } from "../src/index.ts";
-import { Paginator, pageItemsToString } from "../src/index.ts";
+import { Paginator, YesNoDepends, pageItemsToString } from "../src/index.ts";
 
 const iterCheck = (p: PaginatorIter, expects: string[]): void => {
     for (const e of expects) {
@@ -27,6 +27,101 @@ it("two pages", () => {
     const expects = ["1* 2", "1 2*"];
 
     iterCheck(p, expects);
+});
+
+it("forced controls on small page counts", () => {
+    const onePage = Paginator.builder(1)
+        .maxItemCount(3)
+        .hasPrev(YesNoDepends.Yes)
+        .hasNext(YesNoDepends.Yes)
+        .buildPaginator();
+
+    assert.equal(pageItemsToString(onePage.paginate()), "( 1* )");
+
+    const twoPages = Paginator.builder(2)
+        .maxItemCount(4)
+        .hasPrev(YesNoDepends.Yes)
+        .hasNext(YesNoDepends.Yes)
+        .buildPaginatorIter();
+
+    iterCheck(twoPages, ["( 1* 2 >", "< 1 2* )"]);
+});
+
+it("forced and disabled controls", () => {
+    const forced = Paginator.builder(5)
+        .hasPrev(YesNoDepends.Yes)
+        .hasNext(YesNoDepends.Yes)
+        .buildPaginatorIter();
+
+    iterCheck(forced, [
+        "( 1* 2 3 4 5 >",
+        "< 1 2* 3 4 5 >",
+        "< 1 2 3* 4 5 >",
+        "< 1 2 3 4* 5 >",
+        "< 1 2 3 4 5* )",
+    ]);
+
+    const disabled = Paginator.builder(12)
+        .maxItemCount(7)
+        .hasPrev(YesNoDepends.No)
+        .hasNext(YesNoDepends.No)
+        .buildPaginatorIter();
+
+    iterCheck(disabled, [
+        "1* 2 3 4 5 ... 12",
+        "1 2* 3 4 5 ... 12",
+        "1 2 3* 4 5 ... 12",
+        "1 2 3 4* 5 ... 12",
+        "1 ... 4 5* 6 ... 12",
+        "1 ... 5 6* 7 ... 12",
+        "1 ... 6 7* 8 ... 12",
+        "1 ... 7 8* 9 ... 12",
+        "1 ... 8 9* 10 11 12",
+        "1 ... 8 9 10* 11 12",
+        "1 ... 8 9 10 11* 12",
+        "1 ... 8 9 10 11 12*",
+    ]);
+});
+
+it("large page numbers do not overflow", () => {
+    const MAX = Number.MAX_SAFE_INTEGER;
+
+    const lastPage = Paginator.builder(MAX)
+        .currentPage(MAX)
+        .hasNext(YesNoDepends.Yes)
+        .buildPaginator()
+        .paginate();
+
+    assert.equal(lastPage.length, 9);
+    assert.equal(lastPage.at(-1)?.isReservedNext(), true);
+    assert.ok(lastPage.some((item) => item.isCurrentPage() && item.pageNumber === MAX));
+
+    const middlePage = Paginator.builder(MAX)
+        .currentPage(2 ** 52)
+        .buildPaginator()
+        .paginate();
+
+    assert.equal(middlePage.length, 9);
+    assert.ok(middlePage.some((item) => item.isCurrentPage() && item.pageNumber === 2 ** 52));
+
+    const nearLastPage = Paginator.builder(MAX)
+        .currentPage(MAX - 1)
+        .endSize(0)
+        .buildPaginator()
+        .paginate();
+
+    assert.equal(nearLastPage.length, 9);
+    assert.ok(nearLastPage.some((item) => item.isCurrentPage() && item.pageNumber === MAX - 1));
+
+    // A wide window near the last page is shifted to the left instead of being rounded.
+    const wideWindow = Paginator.builder(MAX)
+        .currentPage(MAX - 60)
+        .maxItemCount(301)
+        .endSize(0)
+        .buildPaginator()
+        .paginate();
+
+    assert.equal(wideWindow.length, 301);
 });
 
 it("three pages", () => {
@@ -197,6 +292,24 @@ it("twenty pages, maxItemCount = 19", () => {
         "< 1 ... 6 7 8 9 10 11 12 13 14 15 16 17 18* 19 20 >",
         "< 1 ... 6 7 8 9 10 11 12 13 14 15 16 17 18 19* 20 >",
         "< 1 ... 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20*",
+    ];
+
+    iterCheck(p, expects);
+});
+
+it("zero edge sizes", () => {
+    const p = Paginator.builder(9).maxItemCount(7).startSize(0).endSize(0).buildPaginatorIter();
+
+    const expects = [
+        "1* 2 3 4 5 ... >",
+        "< 1 2* 3 4 ... >",
+        "< 1 2 3* 4 ... >",
+        "< ... 3 4* 5 ... >",
+        "< ... 4 5* 6 ... >",
+        "< ... 5 6* 7 ... >",
+        "< ... 6 7* 8 9 >",
+        "< ... 6 7 8* 9 >",
+        "< ... 5 6 7 8 9*",
     ];
 
     iterCheck(p, expects);

@@ -88,7 +88,7 @@ export class Next extends PageItemWithNumber {
 
 export class ReservedPrev extends PageItem {
     toString(): string {
-        return ")";
+        return "(";
     }
 
     isReservedPrev(): this is ReservedPrev {
@@ -98,7 +98,7 @@ export class ReservedPrev extends PageItem {
 
 export class ReservedNext extends PageItem {
     toString(): string {
-        return "(";
+        return ")";
     }
 
     isReservedNext(): this is ReservedNext {
