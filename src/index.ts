@@ -1,16 +1,15 @@
-import type { PageItem } from "./items.ts";
+import type { PageItem } from "./page-item.ts";
+import { pageItemToString } from "./page-item.ts";
 
-export * as PageItems from "./items.ts";
-export * from "./paginator.ts";
-export * as PaginatorBuildErrors from "./errors.ts";
-export * from "./types.ts";
+export type { PageItem } from "./page-item.ts";
+export { pageItemToString } from "./page-item.ts";
+export type { PaginatorOptions } from "./paginator.ts";
+export { Paginator } from "./paginator.ts";
+export type { PaginatorBuildErrorKind } from "./paginator-builder.ts";
+export { PaginatorBuildError, PaginatorBuilder } from "./paginator-builder.ts";
+export { PaginatorIter } from "./paginator-iter.ts";
+export { YesNoDepends, stringToYesNoDepends } from "./yes-no-depends.ts";
 
-export const pageItemsToString = (pageItems: PageItem[]): string => {
-    const s = [];
-
-    for (const pageItem of pageItems) {
-        s.push(pageItem.toString());
-    }
-
-    return s.join(" ");
-};
+/** Format `PageItem`s to a string. Usually for debug or logging. */
+export const pageItemsToString = (pageItems: readonly PageItem[]): string =>
+    pageItems.map((pageItem) => pageItemToString(pageItem)).join(" ");

@@ -93,8 +93,8 @@ it("large page numbers do not overflow", () => {
         .paginate();
 
     assert.equal(lastPage.length, 9);
-    assert.equal(lastPage.at(-1)?.isReservedNext(), true);
-    assert.ok(lastPage.some((item) => item.isCurrentPage() && item.pageNumber === MAX));
+    assert.equal(lastPage.at(-1)?.type, "reservedNext");
+    assert.ok(lastPage.some((item) => item.type === "currentPage" && item.pageNumber === MAX));
 
     const middlePage = Paginator.builder(MAX)
         .currentPage(2 ** 52)
@@ -102,7 +102,9 @@ it("large page numbers do not overflow", () => {
         .paginate();
 
     assert.equal(middlePage.length, 9);
-    assert.ok(middlePage.some((item) => item.isCurrentPage() && item.pageNumber === 2 ** 52));
+    assert.ok(
+        middlePage.some((item) => item.type === "currentPage" && item.pageNumber === 2 ** 52),
+    );
 
     const nearLastPage = Paginator.builder(MAX)
         .currentPage(MAX - 1)
@@ -111,7 +113,9 @@ it("large page numbers do not overflow", () => {
         .paginate();
 
     assert.equal(nearLastPage.length, 9);
-    assert.ok(nearLastPage.some((item) => item.isCurrentPage() && item.pageNumber === MAX - 1));
+    assert.ok(
+        nearLastPage.some((item) => item.type === "currentPage" && item.pageNumber === MAX - 1),
+    );
 
     // A wide window near the last page is shifted to the left instead of being rounded.
     const wideWindow = Paginator.builder(MAX)
