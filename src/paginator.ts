@@ -6,33 +6,19 @@ import {
     MaxItemCountTooSmall,
     StartSizeIncorrect,
     TotalPagesIncorrect,
-} from "./errors.js";
-
-import type { PageItem } from "./items.js";
-import {
-    currentPage,
-    ignore,
-    next,
-    page,
-    prev,
-    reservedNext,
-    reservedPrev,
-} from "./items.js";
-
-import { YesNoDepends } from "./types.js";
+} from "./errors.ts";
+import type { PageItem } from "./items.ts";
+import * as PageItems from "./items.ts";
+import { YesNoDepends } from "./types.ts";
 
 export class Paginator {
-    /**
-     * An alias of `new PaginatorBuilder`.
-     */
+    /** An alias of `new PaginatorBuilder`. */
     static builder(totalPages: number): PaginatorBuilder {
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        // oxlint-disable-next-line eslint/no-use-before-define
         return new PaginatorBuilder(totalPages);
     }
 
-    /**
-     * You should not new `Paginator` on your own.
-     */
+    /** You should not new `Paginator` on your own. */
     constructor(
         readonly totalPages: number,
         readonly currentPage: number,
@@ -49,21 +35,23 @@ export class Paginator {
         const v: PageItem[] = [];
         let itemsCounter = this.maxItemCount;
 
-        const showPrev = this.hasPrev === YesNoDepends.Yes
-            || (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1
-                && this.totalPages > 2);
+        const showPrev =
+            this.hasPrev === YesNoDepends.Yes ||
+            (this.hasPrev === YesNoDepends.Depends && this.currentPage > 1 && this.totalPages > 2);
 
-        const showNext = this.hasNext === YesNoDepends.Yes
-            || (this.hasNext === YesNoDepends.Depends
-                && this.currentPage < this.totalPages && this.totalPages > 2);
+        const showNext =
+            this.hasNext === YesNoDepends.Yes ||
+            (this.hasNext === YesNoDepends.Depends &&
+                this.currentPage < this.totalPages &&
+                this.totalPages > 2);
 
         if (showPrev) {
             const page = this.currentPage - 1;
 
             if (page === 0) {
-                v.push(reservedPrev());
+                v.push(PageItems.reservedPrev());
             } else {
-                v.push(prev(page));
+                v.push(PageItems.prev(page));
             }
 
             itemsCounter -= 1;
@@ -90,11 +78,10 @@ export class Paginator {
             if (ignoreEnd) {
                 itemsCounter -= endSize + 1;
 
-                for (let i = 1;i <= startSize;i++) {
-                    v.push(page(i));
+                for (let i = 1; i <= startSize; i++) {
+                    v.push(PageItems.page(i));
                 }
 
-                // eslint-disable-next-line no-bitwise
                 const windowSize = itemsCounter >> 1;
 
                 let hpS = this.currentPage - windowSize;
@@ -114,7 +101,7 @@ export class Paginator {
                     // plus one because ignore_start is not needed
                     tpE += hpS + 1 - oldHpS;
                 } else {
-                    v.push(ignore());
+                    v.push(PageItems.ignore());
 
                     if (tpE + 2 > endStart) {
                         // tp_e is too high, shift the window left
@@ -125,87 +112,79 @@ export class Paginator {
                     }
                 }
 
-                for (let i = hpS;i <= hpE;i++) {
-                    v.push(page(i));
+                for (let i = hpS; i <= hpE; i++) {
+                    v.push(PageItems.page(i));
                 }
 
-                v.push(currentPage(this.currentPage));
+                v.push(PageItems.currentPage(this.currentPage));
 
-                for (let i = tpS;i <= tpE;i++) {
-                    v.push(page(i));
+                for (let i = tpS; i <= tpE; i++) {
+                    v.push(PageItems.page(i));
                 }
 
                 if (tpE + 2 === endStart) {
-                    v.push(page(tpE + 1));
+                    v.push(PageItems.page(tpE + 1));
                 } else {
-                    v.push(ignore());
+                    v.push(PageItems.ignore());
                 }
 
-                for (let i = endStart;i <= this.totalPages;i++) {
-                    v.push(page(i));
+                for (let i = endStart; i <= this.totalPages; i++) {
+                    v.push(PageItems.page(i));
                 }
             } else {
                 if (this.currentPage < this.totalPages) {
                     itemsCounter -= this.totalPages - this.currentPage;
                 }
 
-                for (let i = 1;i <= startSize;i++) {
-                    v.push(page(i));
+                for (let i = 1; i <= startSize; i++) {
+                    v.push(PageItems.page(i));
                 }
 
-                v.push(ignore());
+                v.push(PageItems.ignore());
 
-                for (
-                    let i = this.currentPage - itemsCounter;
-                    i < this.currentPage;
-                    i++
-                ) {
-                    v.push(page(i));
+                for (let i = this.currentPage - itemsCounter; i < this.currentPage; i++) {
+                    v.push(PageItems.page(i));
                 }
 
-                v.push(currentPage(this.currentPage));
+                v.push(PageItems.currentPage(this.currentPage));
 
-                for (let i = this.currentPage + 1;i <= this.totalPages;i++) {
-                    v.push(page(i));
+                for (let i = this.currentPage + 1; i <= this.totalPages; i++) {
+                    v.push(PageItems.page(i));
                 }
             }
         } else if (ignoreEnd) {
             itemsCounter -= endSize + 1;
             itemsCounter -= this.currentPage;
 
-            for (let i = 1;i < this.currentPage;i++) {
-                v.push(page(i));
+            for (let i = 1; i < this.currentPage; i++) {
+                v.push(PageItems.page(i));
             }
 
-            v.push(currentPage(this.currentPage));
+            v.push(PageItems.currentPage(this.currentPage));
 
             {
                 const s = this.currentPage + 1;
                 const e = this.currentPage + itemsCounter;
 
-                for (let i = s;i <= e;i++) {
-                    v.push(page(i));
+                for (let i = s; i <= e; i++) {
+                    v.push(PageItems.page(i));
                 }
             }
 
-            v.push(ignore());
+            v.push(PageItems.ignore());
 
-            for (
-                let i = this.totalPages - this.endSize + 1;
-                i <= this.totalPages;
-                i++
-            ) {
-                v.push(page(i));
+            for (let i = this.totalPages - this.endSize + 1; i <= this.totalPages; i++) {
+                v.push(PageItems.page(i));
             }
         } else {
-            for (let i = 1;i < this.currentPage;i++) {
-                v.push(page(i));
+            for (let i = 1; i < this.currentPage; i++) {
+                v.push(PageItems.page(i));
             }
 
-            v.push(currentPage(this.currentPage));
+            v.push(PageItems.currentPage(this.currentPage));
 
-            for (let i = this.currentPage + 1;i <= this.totalPages;i++) {
-                v.push(page(i));
+            for (let i = this.currentPage + 1; i <= this.totalPages; i++) {
+                v.push(PageItems.page(i));
             }
         }
 
@@ -213,9 +192,9 @@ export class Paginator {
             const page = this.currentPage + 1;
 
             if (page > this.totalPages) {
-                v.push(reservedNext());
+                v.push(PageItems.reservedNext());
             } else {
-                v.push(next(page));
+                v.push(PageItems.next(page));
             }
         }
 
@@ -224,146 +203,136 @@ export class Paginator {
 }
 
 export class PaginatorBuilder {
-    private _totalPages: number;
+    #totalPages: number;
 
-    private _currentPage: number;
+    #currentPage: number;
 
-    private _maxItemCount: number;
+    #maxItemCount: number;
 
-    private _startSize: number;
+    #startSize: number;
 
-    private _endSize: number;
+    #endSize: number;
 
-    private _hasPrev: YesNoDepends;
+    #hasPrev: YesNoDepends;
 
-    private _hasNext: YesNoDepends;
+    #hasNext: YesNoDepends;
 
-    /**
-     * An alias of `new PaginatorBuilder`.
-     */
+    /** An alias of `new PaginatorBuilder`. */
     static builder(totalPages: number): PaginatorBuilder {
         return new PaginatorBuilder(totalPages);
     }
 
     constructor(totalPages: number) {
-        this._totalPages = totalPages;
-        this._currentPage = 1;
-        this._maxItemCount = 9;
-        this._startSize = 1;
-        this._endSize = 1;
-        this._hasPrev = YesNoDepends.Depends;
-        this._hasNext = YesNoDepends.Depends;
+        this.#totalPages = totalPages;
+        this.#currentPage = 1;
+        this.#maxItemCount = 9;
+        this.#startSize = 1;
+        this.#endSize = 1;
+        this.#hasPrev = YesNoDepends.Depends;
+        this.#hasNext = YesNoDepends.Depends;
     }
 
     getTotalPages(): number {
-        return this._totalPages;
+        return this.#totalPages;
     }
 
-    /**
-     * Set the number of pages.
-     */
+    /** Set the number of pages. */
     totalPages(n: number): this {
-        this._totalPages = n;
+        this.#totalPages = n;
 
         return this;
     }
 
     getCurrentPage(): number {
-        return this._currentPage;
+        return this.#currentPage;
     }
 
-    /**
-     * Set the number of the current page.
-     */
+    /** Set the number of the current page. */
     currentPage(n: number): this {
-        this._currentPage = n;
+        this.#currentPage = n;
 
         return this;
     }
 
     getMaxItemCount(): number {
-        return this._maxItemCount;
+        return this.#maxItemCount;
     }
 
-    /**
-     * Set the max number of `PageItem`s after generated.
-     */
+    /** Set the max number of `PageItem`s after generated. */
     maxItemCount(n: number): this {
-        this._maxItemCount = n;
+        this.#maxItemCount = n;
 
         return this;
     }
 
     getStartSize(): number {
-        return this._startSize;
+        return this.#startSize;
     }
 
     /**
-     * Set the number of `PageItem`s (the `PageItem::Prev` item is excluded) on the start edge (before the first `PageItem::Ignore` item).
+     * Set the number of `PageItem`s (the `PageItem::Prev` item is excluded) on the start edge
+     * (before the first `PageItem::Ignore` item).
      */
     startSize(n: number): this {
-        this._startSize = n;
+        this.#startSize = n;
 
         return this;
     }
 
     getEndSize(): number {
-        return this._endSize;
+        return this.#endSize;
     }
 
     /**
-     * Set the number of `PageItem`s (the `PageItem::Next` item is excluded) on the end edge (after the last `PageItem::Ignore` item).
+     * Set the number of `PageItem`s (the `PageItem::Next` item is excluded) on the end edge (after
+     * the last `PageItem::Ignore` item).
      */
     endSize(n: number): this {
-        this._endSize = n;
+        this.#endSize = n;
 
         return this;
     }
 
     getHasPrev(): YesNoDepends {
-        return this._hasPrev;
+        return this.#hasPrev;
     }
 
-    /**
-     * Set whether to add the `PageItem::Prev` item.
-     */
+    /** Set whether to add the `PageItem::Prev` item. */
     hasPrev(opt: YesNoDepends): this {
-        this._hasPrev = opt;
+        this.#hasPrev = opt;
 
         return this;
     }
 
     getHasNext(): YesNoDepends {
-        return this._hasNext;
+        return this.#hasNext;
     }
 
-    /**
-     * Set whether to add the `PageItem::Next` item.
-     */
+    /** Set whether to add the `PageItem::Next` item. */
     hasNext(opt: YesNoDepends): this {
-        this._hasNext = opt;
+        this.#hasNext = opt;
 
         return this;
     }
 
     computeMinItemCount(): number {
-        switch (this._totalPages) {
+        switch (this.#totalPages) {
             case 0:
             case 1:
             case 2:
-                return this._totalPages;
+                return this.#totalPages;
             default: {
-                const startSize = Math.min(this._startSize, this._totalPages);
-                const endSize = Math.min(this._endSize, this._totalPages);
+                const startSize = Math.min(this.#startSize, this.#totalPages);
+                const endSize = Math.min(this.#endSize, this.#totalPages);
                 const size = startSize + endSize;
 
-                let minItemCount = Math.min(size + 3, this._totalPages);
+                let minItemCount = Math.min(size + 3, this.#totalPages);
 
-                if (this._hasPrev !== YesNoDepends.No) {
+                if (this.#hasPrev !== YesNoDepends.No) {
                     minItemCount += 1;
                 }
 
-                if (this._hasNext !== YesNoDepends.No) {
+                if (this.#hasNext !== YesNoDepends.No) {
                     minItemCount += 1;
                 }
 
@@ -382,35 +351,33 @@ export class PaginatorBuilder {
      * @throws {PaginatorBuildErrors.MaxItemCountTooSmall}
      */
     private buildCheckCommon(): void {
-        if (
-            !Number.isSafeInteger(this._currentPage) || this._currentPage <= 0
-        ) {
+        if (!Number.isSafeInteger(this.#currentPage) || this.#currentPage <= 0) {
             throw new CurrentPageIncorrect();
         }
 
-        if (!Number.isSafeInteger(this._totalPages) || this._totalPages <= 0) {
+        if (!Number.isSafeInteger(this.#totalPages) || this.#totalPages <= 0) {
             throw new TotalPagesIncorrect();
         }
 
-        if (!Number.isSafeInteger(this._maxItemCount)) {
+        if (!Number.isSafeInteger(this.#maxItemCount)) {
             throw new MaxItemCountIncorrect();
         }
 
-        if (!Number.isSafeInteger(this._startSize) || this._startSize < 0) {
+        if (!Number.isSafeInteger(this.#startSize) || this.#startSize < 0) {
             throw new StartSizeIncorrect();
         }
 
-        if (!Number.isSafeInteger(this._endSize) || this._endSize < 0) {
+        if (!Number.isSafeInteger(this.#endSize) || this.#endSize < 0) {
             throw new EndSizeIncorrect();
         }
 
-        if (this._currentPage > this._totalPages) {
-            throw new CurrentPageTooLarge(this._currentPage, this._totalPages);
+        if (this.#currentPage > this.#totalPages) {
+            throw new CurrentPageTooLarge(this.#currentPage, this.#totalPages);
         }
 
         const minItemCount = this.computeMinItemCount();
 
-        if (this._maxItemCount < minItemCount) {
+        if (this.#maxItemCount < minItemCount) {
             throw new MaxItemCountTooSmall(minItemCount);
         }
     }
@@ -428,13 +395,13 @@ export class PaginatorBuilder {
         this.buildCheckCommon();
 
         return new Paginator(
-            this._totalPages,
-            this._currentPage,
-            this._maxItemCount,
-            this._startSize,
-            this._endSize,
-            this._hasPrev,
-            this._hasNext,
+            this.#totalPages,
+            this.#currentPage,
+            this.#maxItemCount,
+            this.#startSize,
+            this.#endSize,
+            this.#hasPrev,
+            this.#hasNext,
         );
     }
 
@@ -448,24 +415,22 @@ export class PaginatorBuilder {
     buildPaginatorIter(): PaginatorIter {
         this.buildCheckCommon();
 
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        // oxlint-disable-next-line eslint/no-use-before-define
         return new PaginatorIter(
-            this._totalPages,
-            this._currentPage,
-            this._totalPages,
-            this._maxItemCount,
-            this._startSize,
-            this._endSize,
-            this._hasPrev,
-            this._hasNext,
+            this.#totalPages,
+            this.#currentPage,
+            this.#totalPages,
+            this.#maxItemCount,
+            this.#startSize,
+            this.#endSize,
+            this.#hasPrev,
+            this.#hasNext,
         );
     }
 }
 
 export class PaginatorIter implements IterableIterator<Paginator> {
-    /**
-     * You should not new `PaginatorIter` on your own.
-     */
+    /** You should not new `PaginatorIter` on your own. */
     constructor(
         private readonly totalPages: number,
         private currentPage: number,

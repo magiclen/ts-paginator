@@ -110,16 +110,16 @@ export const page = (pageNumber: number): Page => new Page(pageNumber);
 
 export const currentPage = (pageNumber: number): CurrentPage => new CurrentPage(pageNumber);
 
-const _ignore = new Ignore();
-const _reservedPrev = new ReservedPrev();
-const _reservedNext = new ReservedNext();
+const IGNORE = new Ignore();
+const RESERVED_PREV = new ReservedPrev();
+const RESERVED_NEXT = new ReservedNext();
 
-export const ignore = (): Ignore => _ignore;
+export const ignore = (): Ignore => IGNORE;
 
 export const prev = (pageNumber: number): Prev => new Prev(pageNumber);
 
 export const next = (pageNumber: number): Next => new Next(pageNumber);
 
-export const reservedPrev = (): ReservedPrev => _reservedPrev;
+export const reservedPrev = (): ReservedPrev => RESERVED_PREV;
 
-export const reservedNext = (): ReservedNext => _reservedNext;
+export const reservedNext = (): ReservedNext => RESERVED_NEXT;

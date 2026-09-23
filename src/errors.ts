@@ -1,5 +1,4 @@
-export abstract class PaginatorBuildError extends Error {
-}
+export abstract class PaginatorBuildError extends Error {}
 
 export class CurrentPageIncorrect extends PaginatorBuildError {
     constructor() {
@@ -32,10 +31,11 @@ export class EndSizeIncorrect extends PaginatorBuildError {
 }
 
 export class CurrentPageTooLarge extends PaginatorBuildError {
-    constructor(readonly currentPage: number, readonly totalPages: number) {
-        super(
-            `CurrentPageTooLarge: currentPage = ${currentPage}, totalPages = ${totalPages}`,
-        );
+    constructor(
+        readonly currentPage: number,
+        readonly totalPages: number,
+    ) {
+        super(`CurrentPageTooLarge: currentPage = ${currentPage}, totalPages = ${totalPages}`);
     }
 }
 

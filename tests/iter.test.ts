@@ -1,24 +1,27 @@
-import { PaginatorBuilder } from "../src/lib.js";
+import assert from "node:assert/strict";
+import { it } from "node:test";
+
+import { PaginatorBuilder } from "../src/index.ts";
 
 it("one page", () => {
     const iter = new PaginatorBuilder(1).buildPaginatorIter();
 
-    expect(iter.next().value?.currentPage).toBe(1);
-    expect(iter.next().value).toBeUndefined();
+    assert.equal(iter.next().value?.currentPage, 1);
+    assert.equal(iter.next().value, undefined);
 });
 
 it("two pages", () => {
     const iter = new PaginatorBuilder(2).buildPaginatorIter();
 
-    expect(iter.next().value?.currentPage).toBe(1);
-    expect(iter.next().value?.currentPage).toBe(2);
-    expect(iter.next().value).toBeUndefined();
+    assert.equal(iter.next().value?.currentPage, 1);
+    assert.equal(iter.next().value?.currentPage, 2);
+    assert.equal(iter.next().value, undefined);
 });
 
 it("two pages rev", () => {
     const iter = new PaginatorBuilder(2).buildPaginatorIter();
 
-    expect(iter.nextBack().value?.currentPage).toBe(2);
-    expect(iter.nextBack().value?.currentPage).toBe(1);
-    expect(iter.nextBack().value).toBeUndefined();
+    assert.equal(iter.nextBack().value?.currentPage, 2);
+    assert.equal(iter.nextBack().value?.currentPage, 1);
+    assert.equal(iter.nextBack().value, undefined);
 });

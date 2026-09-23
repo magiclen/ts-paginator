@@ -1,9 +1,9 @@
-import type { PageItem } from "./items.js";
+import type { PageItem } from "./items.ts";
 
-export * as PageItems from "./items.js";
-export * from "./paginator.js";
-export * as PaginatorBuildErrors from "./errors.js";
-export * from "./types.js";
+export * as PageItems from "./items.ts";
+export * from "./paginator.ts";
+export * as PaginatorBuildErrors from "./errors.ts";
+export * from "./types.ts";
 
 export const pageItemsToString = (pageItems: PageItem[]): string => {
     const s = [];

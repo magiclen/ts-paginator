@@ -1,17 +1,23 @@
-import {
-    PaginatorBuildErrors,
-    PaginatorBuilder,
-    YesNoDepends,
-} from "../src/lib.js";
+import assert from "node:assert/strict";
+import { it } from "node:test";
+
+import { PaginatorBuildErrors, PaginatorBuilder, YesNoDepends } from "../src/index.ts";
 
 it("basic", () => {
-    expect(() => PaginatorBuilder.builder(1).buildPaginator()).toBeDefined();
-    expect(() => PaginatorBuilder.builder(1).buildPaginatorIter())
-        .toBeDefined();
-    expect(() => PaginatorBuilder.builder(0).currentPage(1).buildPaginator())
-        .toThrow(PaginatorBuildErrors.TotalPagesIncorrect);
-    expect(() => PaginatorBuilder.builder(1).currentPage(0).buildPaginatorIter()).toThrow(PaginatorBuildErrors.CurrentPageIncorrect);
-    expect(() => PaginatorBuilder.builder(1).currentPage(2).buildPaginatorIter()).toThrow(PaginatorBuildErrors.CurrentPageTooLarge);
+    assert.doesNotThrow(() => PaginatorBuilder.builder(1).buildPaginator());
+    assert.doesNotThrow(() => PaginatorBuilder.builder(1).buildPaginatorIter());
+    assert.throws(
+        () => PaginatorBuilder.builder(0).currentPage(1).buildPaginator(),
+        PaginatorBuildErrors.TotalPagesIncorrect,
+    );
+    assert.throws(
+        () => PaginatorBuilder.builder(1).currentPage(0).buildPaginatorIter(),
+        PaginatorBuildErrors.CurrentPageIncorrect,
+    );
+    assert.throws(
+        () => PaginatorBuilder.builder(1).currentPage(2).buildPaginatorIter(),
+        PaginatorBuildErrors.CurrentPageTooLarge,
+    );
 });
 
 it("maxItemCount 1", () => {
@@ -21,36 +27,21 @@ it("maxItemCount 1", () => {
         .hasPrev(YesNoDepends.Depends)
         .hasNext(YesNoDepends.Depends);
 
-    expect(() => builder.totalPages(1).maxItemCount(0).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(1).maxItemCount(1).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(2).maxItemCount(1).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(2).maxItemCount(2).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(2).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(3).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(4).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(5).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(4).maxItemCount(5).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(4).maxItemCount(6).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(5).maxItemCount(6).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(5).maxItemCount(7).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(6).maxItemCount(7).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(7).maxItemCount(7).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(7).maxItemCount(6).buildPaginator())
-        .toThrow(Error);
+    assert.throws(() => builder.totalPages(1).maxItemCount(0).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(1).maxItemCount(1).buildPaginator());
+    assert.throws(() => builder.totalPages(2).maxItemCount(1).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(2).maxItemCount(2).buildPaginator());
+    assert.throws(() => builder.totalPages(3).maxItemCount(2).buildPaginator(), Error);
+    assert.throws(() => builder.totalPages(3).maxItemCount(3).buildPaginator(), Error);
+    assert.throws(() => builder.totalPages(3).maxItemCount(4).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(3).maxItemCount(5).buildPaginator());
+    assert.throws(() => builder.totalPages(4).maxItemCount(5).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(4).maxItemCount(6).buildPaginator());
+    assert.throws(() => builder.totalPages(5).maxItemCount(6).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(5).maxItemCount(7).buildPaginator());
+    assert.doesNotThrow(() => builder.totalPages(6).maxItemCount(7).buildPaginator());
+    assert.doesNotThrow(() => builder.totalPages(7).maxItemCount(7).buildPaginator());
+    assert.throws(() => builder.totalPages(7).maxItemCount(6).buildPaginator(), Error);
 });
 
 it("maxItemCount 2", () => {
@@ -60,22 +51,14 @@ it("maxItemCount 2", () => {
         .hasPrev(YesNoDepends.No)
         .hasNext(YesNoDepends.No);
 
-    expect(() => builder.totalPages(1).maxItemCount(0).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(1).maxItemCount(1).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(2).maxItemCount(1).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(2).maxItemCount(2).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(2).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(3).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(4).maxItemCount(3).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(4).maxItemCount(2).buildPaginator())
-        .toThrow(Error);
+    assert.throws(() => builder.totalPages(1).maxItemCount(0).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(1).maxItemCount(1).buildPaginator());
+    assert.throws(() => builder.totalPages(2).maxItemCount(1).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(2).maxItemCount(2).buildPaginator());
+    assert.throws(() => builder.totalPages(3).maxItemCount(2).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(3).maxItemCount(3).buildPaginator());
+    assert.doesNotThrow(() => builder.totalPages(4).maxItemCount(3).buildPaginator());
+    assert.throws(() => builder.totalPages(4).maxItemCount(2).buildPaginator(), Error);
 });
 
 it("maxItemCount 3", () => {
@@ -85,36 +68,20 @@ it("maxItemCount 3", () => {
         .hasPrev(YesNoDepends.No)
         .hasNext(YesNoDepends.No);
 
-    expect(() => builder.totalPages(1).maxItemCount(0).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(1).maxItemCount(1).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(2).maxItemCount(1).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(2).maxItemCount(2).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(2).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(3).maxItemCount(3).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(4).maxItemCount(3).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(4).maxItemCount(4).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(5).maxItemCount(4).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(5).maxItemCount(5).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(6).maxItemCount(5).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(6).maxItemCount(6).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(7).maxItemCount(6).buildPaginator())
-        .toThrow(Error);
-    expect(() => builder.totalPages(7).maxItemCount(7).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(8).maxItemCount(7).buildPaginator()).not
-        .toThrow(Error);
-    expect(() => builder.totalPages(8).maxItemCount(6).buildPaginator())
-        .toThrow(Error);
+    assert.throws(() => builder.totalPages(1).maxItemCount(0).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(1).maxItemCount(1).buildPaginator());
+    assert.throws(() => builder.totalPages(2).maxItemCount(1).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(2).maxItemCount(2).buildPaginator());
+    assert.throws(() => builder.totalPages(3).maxItemCount(2).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(3).maxItemCount(3).buildPaginator());
+    assert.throws(() => builder.totalPages(4).maxItemCount(3).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(4).maxItemCount(4).buildPaginator());
+    assert.throws(() => builder.totalPages(5).maxItemCount(4).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(5).maxItemCount(5).buildPaginator());
+    assert.throws(() => builder.totalPages(6).maxItemCount(5).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(6).maxItemCount(6).buildPaginator());
+    assert.throws(() => builder.totalPages(7).maxItemCount(6).buildPaginator(), Error);
+    assert.doesNotThrow(() => builder.totalPages(7).maxItemCount(7).buildPaginator());
+    assert.doesNotThrow(() => builder.totalPages(8).maxItemCount(7).buildPaginator());
+    assert.throws(() => builder.totalPages(8).maxItemCount(6).buildPaginator(), Error);
 });
