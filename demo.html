@@ -172,7 +172,7 @@
             <div class="row mt-5">
                 <div class="col-12">
                     <div id="result">
-                        <!-- The reulst goes here. -->
+                        <!-- The result goes here. -->
                     </div>
                 </div>
             </div>
@@ -206,20 +206,28 @@
                     let html = "";
 
                     for (const pageItem of paginator.paginate()) {
-                        if (pageItem.isPrev()) {
-                            html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">&laquo;</a></li>`;
-                        } else if (pageItem.isReservedPrev()) {
-                            html += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
-                        } else if (pageItem.isPage()) {
-                            html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">${pageItem.pageNumber}</a></li>`;
-                        } else if (pageItem.isCurrentPage()) {
-                            html += `<li class="page-item active"><span class="page-link">${pageItem.pageNumber}</span></li>`;
-                        } else if (pageItem.isIgnore()) {
-                            html += `<li class="page-item"><span class="page-link">...</span></li>`;
-                        } else if (pageItem.isNext()) {
-                            html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">&raquo;</a></li>`;
-                        } else if (pageItem.isReservedNext()) {
-                            html += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+                        switch (pageItem.type) {
+                            case "prev":
+                                html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">&laquo;</a></li>`;
+                                break;
+                            case "reservedPrev":
+                                html += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
+                                break;
+                            case "page":
+                                html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">${pageItem.pageNumber}</a></li>`;
+                                break;
+                            case "currentPage":
+                                html += `<li class="page-item active"><span class="page-link">${pageItem.pageNumber}</span></li>`;
+                                break;
+                            case "ignore":
+                                html += `<li class="page-item"><span class="page-link">...</span></li>`;
+                                break;
+                            case "next":
+                                html += `<li class="page-item"><a href="#${pageItem.pageNumber}" class="page-link">&raquo;</a></li>`;
+                                break;
+                            case "reservedNext":
+                                html += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+                                break;
                         }
                     }
 
